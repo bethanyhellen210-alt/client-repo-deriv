@@ -130,7 +130,17 @@ export type TRsStrategyName =
     | `accumulators_reverse_martingale`
     | `accumulators_reverse_martingale_on_stat_reset`
     | `accumulators_reverse_dalembert`
-    | `accumulators_reverse_dalembert_on_stat_reset`;
+    | `accumulators_reverse_dalembert_on_stat_reset`
+    | `range momentum over 1`
+    | `increasing gap differs`
+    | `signal score differs`
+    | `long absence return differs`
+    | `conditional even odd differs`
+    | `conditional high low differs`
+    | `consecutive digits over`
+    | `digit successor differs`
+    | `window index differs`
+    | `strategy voting differs`;
 
 export type TDurationType = 't' | 's' | 'm' | 'h' | 'd';
 
