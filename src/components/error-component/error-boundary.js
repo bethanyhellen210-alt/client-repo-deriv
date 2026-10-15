@@ -25,7 +25,25 @@ class ErrorBoundary extends React.Component {
                 header='Something went wrong'
                 message='The app could not finish loading. Please refresh and try again.'
                 redirect_label='Refresh'
-                redirectOnClick={() => window.location.reload()}
+                redirectOnClick={async () => {
+                    try {
+                        if ('serviceWorker' in navigator) {
+                            const registrations = await navigator.serviceWorker.getRegistrations();
+                            await Promise.all(registrations.map(registration => registration.unregister()));
+                        }
+
+                        if ('caches' in window) {
+                            const cacheNames = await caches.keys();
+                            await Promise.all(cacheNames.map(cacheName => caches.delete(cacheName)));
+                        }
+                    } catch (cleanupError) {
+                        console.warn('[ErrorBoundary] Could not clear cached app assets:', cleanupError);
+                    } finally {
+                        const url = new URL(window.location.href);
+                        url.searchParams.set('reload', Date.now().toString());
+                        window.location.replace(url.toString());
+                    }
+                }}
                 should_show_refresh={true}
                 should_redirect={false}
             />
