@@ -13,7 +13,6 @@ type TBot = {
     name: string;
     file: string;
     guide_file?: string;
-    description: string;
     emoji: string;
     is_premium?: boolean;
     priority?: number;
@@ -24,7 +23,6 @@ type TBotManifestEntry = {
     name?: string;
     file: string;
     guide_file?: string;
-    description?: string;
     emoji?: string;
     is_premium?: boolean;
     priority?: number;
@@ -50,9 +48,6 @@ const createManifestBot = (entry: TBotManifestEntry): TBot => {
         name,
         file: entry.file,
         guide_file: entry.guide_file,
-        description:
-            entry.description ||
-            `${name} loads into Bot Builder and executes through the standard purchase conditions.`,
         emoji: entry.emoji || 'BOT',
         is_premium: entry.is_premium,
         priority: entry.priority,
@@ -189,7 +184,6 @@ const BotCard = observer(({ bot }: { bot: TBot }) => {
                 </div>
 
                 <h3 className='bb-card__name'>{bot.name}</h3>
-                <p className='bb-card__desc'>{bot.description}</p>
 
                 <div className='bb-card__actions'>
                     {guideUrl ? (
