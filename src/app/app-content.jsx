@@ -15,7 +15,7 @@ import useThemeSwitcher from '@/hooks/useThemeSwitcher';
 import { ThemeProvider } from '@deriv-com/quill-ui';
 import { setSmartChartsPublicPath } from '@deriv-com/smartcharts-champion';
 import { localize } from '@deriv-com/translations';
-import Audio from '../components/audio';
+import { playAppSound } from '@/components/audio/audio';
 import BlocklyLoading from '../components/blockly-loading';
 import BotStopped from '../components/bot-stopped';
 import BotBuilder from '../pages/bot-builder';
@@ -35,6 +35,7 @@ const AppContent = observer(() => {
     const { recovered_transactions, recoverPendingContracts } = transactions;
     const is_subscribed_to_msg_listener = React.useRef(false);
     const msg_listener = React.useRef(null);
+    const sounded_contracts = React.useRef(new Set());
     const symbols_loaded = React.useRef(false);
     const { connectionStatus } = useApiBase();
 
@@ -103,11 +104,26 @@ const AppContent = observer(() => {
         ({ data }) => {
             if (data?.msg_type === 'proposal_open_contract' && !data?.error) {
                 const { proposal_open_contract } = data;
+                const contract_id = proposal_open_contract?.contract_id;
+
                 if (
                     proposal_open_contract?.status !== 'open' &&
-                    !recovered_transactions?.includes(proposal_open_contract?.contract_id)
+                    !recovered_transactions?.includes(contract_id)
                 ) {
                     recoverPendingContracts(proposal_open_contract);
+                }
+
+                // Play one outcome sound per settled contract. Never let audio errors affect trading.
+                if (
+                    proposal_open_contract?.status !== 'open' &&
+                    contract_id !== undefined &&
+                    contract_id !== null &&
+                    !sounded_contracts.current.has(contract_id)
+                ) {
+                    sounded_contracts.current.add(contract_id);
+                    const profit = Number(proposal_open_contract?.profit);
+                    if (Number.isFinite(profit) && profit > 0) playAppSound('trade-profit');
+                    else if (Number.isFinite(profit) && profit < 0) playAppSound('trade-loss');
                 }
             }
         },
@@ -181,7 +197,6 @@ const AppContent = observer(() => {
             <ThemeProvider theme={is_dark_mode_on ? 'dark' : 'light'}>
                 <BlocklyLoading />
                 <div className='bot-dashboard bot' data-testid='dt_bot_dashboard'>
-                    <Audio />
                     <Main />
                     <BotBuilder />
                     <BotStopped />
