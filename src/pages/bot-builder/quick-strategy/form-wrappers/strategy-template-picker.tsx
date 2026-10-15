@@ -1,7 +1,9 @@
 import React from 'react';
 import { useFormikContext } from 'formik';
 import { observer } from 'mobx-react-lite';
+import { DBOT_TABS } from '@/constants/bot-contents';
 import { useStore } from '@/hooks/useStore';
+import { LegacyGuide1pxIcon } from '@deriv/quill-icons';
 import { Chip } from '@deriv-com/quill-ui';
 import { SearchField } from '@deriv-com/quill-ui-next';
 import { localize } from '@deriv-com/translations';
@@ -17,8 +19,8 @@ type TStrategyTemplatePicker = {
 
 const StrategyTemplatePicker = observer(({ setCurrentStep, setSelectedTradeType }: TStrategyTemplatePicker) => {
     const { dashboard, quick_strategy } = useStore();
-    const { setFAQSearchValue, filterTuotrialTab } = dashboard;
-    const { setSelectedStrategy } = quick_strategy;
+    const { setActiveTabTutorial, setActiveTab, setFAQSearchValue, filterTuotrialTab } = dashboard;
+    const { setFormVisibility, setSelectedStrategy } = quick_strategy;
     const { setFieldValue } = useFormikContext<TFormData>();
 
     const [selector_chip_value, setSelectorChipValue] = React.useState(0);
@@ -61,6 +63,25 @@ const StrategyTemplatePicker = observer(({ setCurrentStep, setSelectedTradeType 
                     value={search_value}
                     size='sm'
                 />
+
+                <button
+                    className='strategy-template-picker__icon'
+                    onClick={() => {
+                        setActiveTab(DBOT_TABS.TUTORIAL);
+                        setActiveTabTutorial(2);
+                        setFormVisibility(false);
+
+                        // Add a small delay to ensure the tab is selected before scrolling
+                        setTimeout(() => {
+                            const tutorialsSection = document.getElementById('id-tutorials');
+                            if (tutorialsSection) {
+                                tutorialsSection.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+                            }
+                        }, 100);
+                    }}
+                >
+                    <LegacyGuide1pxIcon iconSize='sm' />
+                </button>
             </div>
             <div className='strategy-template-picker__chips'>
                 {TRADE_TYPES.map((item, index) => (
