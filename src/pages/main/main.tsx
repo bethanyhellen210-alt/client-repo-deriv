@@ -97,11 +97,11 @@ const AppWrapper = observer(() => {
         DBOT_TABS;
     const init_render = React.useRef(true);
     const hash = [
-        'bot_ideas',
-        'best_bots',
-        'up_and_down',
         'dashboard',
         'bot_builder',
+        'best_bots',
+        'bot_ideas',
+        'up_and_down',
         'auto_trades',
         'manual_trading',
         'scanner',
@@ -179,7 +179,7 @@ const AppWrapper = observer(() => {
 
     let tab_value: number | string = active_tab;
     const getDefaultLandingTab = () => {
-        return DBOT_TABS.BEST_BOTS;
+        return DBOT_TABS.DASHBOARD;
     };
     const GetHashedValue = (tab: number) => {
         tab_value = location.hash?.split('#')[1];
@@ -208,11 +208,7 @@ const AppWrapper = observer(() => {
 
     React.useEffect(() => {
         const first_visible_tab_id =
-            isRiskManagersDomain && show_competition
-                ? 'id-competition'
-                : show_bot_ideas
-                  ? 'id-bot-ideas'
-                  : 'id-best-bots';
+            isRiskManagersDomain && show_competition ? 'id-competition' : 'id-dbot-dashboard';
         const el_dashboard = document.getElementById(first_visible_tab_id);
         const last_visible_tab_id = show_competition
             ? 'id-competition'
@@ -500,53 +496,6 @@ const AppWrapper = observer(() => {
                     <div>
                         {!isDesktop && left_tab_shadow && <span className='tabs-shadow tabs-shadow--left' />}{' '}
                         <Tabs active_index={active_tab} className='main__tabs' onTabItemClick={handleTabChange} top>
-                            {show_bot_ideas && (
-                                <div
-                                    label={
-                                        <>
-                                            <LabelPairedLightbulbCaptionRegularIcon
-                                                height='24px'
-                                                width='24px'
-                                                fill='#c8a45d'
-                                            />
-                                            <Localize i18n_default_text='Dashboard' />
-                                        </>
-                                    }
-                                    id='id-bot-ideas'
-                                >
-                                    <BotIdeas />
-                                </div>
-                            )}
-                            <div
-                                label={
-                                    <>
-                                        <LabelPairedCircleStarCaptionRegularIcon
-                                            height='24px'
-                                            width='24px'
-                                            fill='#c8a45d'
-                                        />
-                                        <Localize i18n_default_text='Free Bots' />
-                                    </>
-                                }
-                                id='id-best-bots'
-                            >
-                                <BestBots />
-                            </div>
-                            <div
-                                label={
-                                    <>
-                                        <LabelPairedChartTrendUpCaptionRegularIcon
-                                            height='24px'
-                                            width='24px'
-                                            fill='#c8a45d'
-                                        />
-                                        <Localize i18n_default_text='Signal AI' />
-                                    </>
-                                }
-                                id='id-up-and-down'
-                            >
-                                <UpAndDown />
-                            </div>
                             <div
                                 label={
                                     <>
@@ -575,6 +524,53 @@ const AppWrapper = observer(() => {
                                 }
                                 id='id-bot-builder'
                             />
+                            <div
+                                label={
+                                    <>
+                                        <LabelPairedCircleStarCaptionRegularIcon
+                                            height='24px'
+                                            width='24px'
+                                            fill='#c8a45d'
+                                        />
+                                        <Localize i18n_default_text='Free Bots' />
+                                    </>
+                                }
+                                id='id-best-bots'
+                            >
+                                <BestBots />
+                            </div>
+                            {show_bot_ideas && (
+                                <div
+                                    label={
+                                        <>
+                                            <LabelPairedLightbulbCaptionRegularIcon
+                                                height='24px'
+                                                width='24px'
+                                                fill='#c8a45d'
+                                            />
+                                            <Localize i18n_default_text='Dashboard' />
+                                        </>
+                                    }
+                                    id='id-bot-ideas'
+                                >
+                                    <BotIdeas />
+                                </div>
+                            )}
+                            <div
+                                label={
+                                    <>
+                                        <LabelPairedChartTrendUpCaptionRegularIcon
+                                            height='24px'
+                                            width='24px'
+                                            fill='#c8a45d'
+                                        />
+                                        <Localize i18n_default_text='Signal AI' />
+                                    </>
+                                }
+                                id='id-up-and-down'
+                            >
+                                <UpAndDown />
+                            </div>
                             {show_auto_trades && (
                                 <div
                                     label={
