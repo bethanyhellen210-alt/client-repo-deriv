@@ -8,6 +8,20 @@ const AUDIO_IDS = ['announcement', 'earned-money', 'job-done', 'trade-profit', '
 // inside a click handler. Unlock every audio element with one muted play+pause on the very first
 // tap/click anywhere on the page — after that, browsers treat the element as already "activated"
 // and later programmatic .play() calls go through normally.
+export const playAppSound = (id: string) => {
+    const element = document.getElementById(id) as HTMLAudioElement | null;
+    if (!element) return;
+
+    try {
+        element.currentTime = 0;
+        void element.play().catch(() => {
+            // Browsers may block sound until the user has interacted with the page.
+        });
+    } catch {
+        // Audio support must never interrupt trading or app navigation.
+    }
+};
+
 const unlockAudioOnFirstInteraction = () => {
     AUDIO_IDS.forEach(id => {
         const el = document.getElementById(id) as HTMLAudioElement | null;
