@@ -326,9 +326,11 @@ export const getDomainRedirectUrl = (
 export const getDomainConfig = (activeHostname = window.location.hostname): DomainConfig => {
     const hostname = normalizeHostname(activeHostname);
     return {
-        clientId: '34t6D3VOm0Kv3LadCeJjL',
-        appId: '34t6D3VOm0Kv3LadCeJjL',
-        redirectUri: 'https://tradehub.christech.co.ke/callback',
+        // Set these in Vercel Project Settings → Environment Variables.
+        // Rsbuild exposes them through the process.env definitions in rsbuild.config.ts.
+        clientId: process.env.CLIENT_ID || '',
+        appId: process.env.APP_ID || '',
+        redirectUri: process.env.REDIRECT_URI || '',
         botsFolder: DEFAULT_BOTS_FOLDER,
         canonicalHost: hostname,
         includeLegacyAppIdInOAuth: true,
