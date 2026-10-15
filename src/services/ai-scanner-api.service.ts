@@ -9,11 +9,10 @@ export class PremiumDerivApiService {
     private static requestId = 8000;
 
     private static async getApi(): Promise<any> {
-        const api = api_base.api as any;
+        let api = api_base.api as any;
         if (api?.connection?.readyState === WebSocket.OPEN) return api;
-        if (!api) {
-            await api_base.init(true);
-        }
+        await api_base.init(true);
+        api = api_base.api as any;
         for (let attempt = 0; attempt < 80; attempt += 1) {
             const current = api_base.api as any;
             if (current?.connection?.readyState === WebSocket.OPEN) return current;
