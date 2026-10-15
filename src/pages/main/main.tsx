@@ -44,6 +44,7 @@ import { Localize, localize } from '@deriv-com/translations';
 import { useDevice } from '@deriv-com/ui';
 import RunPanel from '../../components/run-panel';
 import AutoTrades from '../auto-trades/auto-trades';
+import BotBuilder from '../bot-builder';
 import BestBots from '../best-bots';
 import BotIdeas from '../bot-ideas';
 import ChartModal from '../chart/chart-modal';
@@ -525,7 +526,6 @@ const AppWrapper = observer(() => {
                                 }
                                 id='id-bot-builder'
                             >
-                                <span aria-hidden='true' style={{ display: 'none' }} />
                             </div>
                             <div
                                 label={
@@ -715,6 +715,7 @@ const AppWrapper = observer(() => {
                     </div>
                 </div>
             </div>
+            <BotBuilder />
             <GlobalAIScannerV2 openBotBuilder={() => setActiveTab(DBOT_TABS.BOT_BUILDER)} />
             <RiskDisclaimerFloating />
             <DesktopWrapper>
