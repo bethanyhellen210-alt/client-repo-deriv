@@ -1,4 +1,4 @@
-import React from 'react';
+﻿import React from 'react';
 import ReactDomServer from 'react-dom/server';
 import { localize } from '@deriv-com/translations';
 
@@ -157,9 +157,25 @@ export const ToolboxItems = () =>
                         </Shadow>
                     </Value>
                 </Block>
+                <Block type='digit_percentage_condition'>
+                    <Field name='DIRECTION'>OVER</Field>
+                    <Value name='BARRIER'>
+                        <Shadow type='math_number'>
+                            <Field name='NUM'>5</Field>
+                        </Shadow>
+                    </Value>
+                    <Value name='WINDOW'>
+                        <Shadow type='math_number'>
+                            <Field name='NUM'>100</Field>
+                        </Shadow>
+                    </Value>
+                </Block>
             </Category>
             <Category id='purchase_conditions' name={localize('Purchase conditions')}>
                 <Block type='before_purchase' />
+                <Block type='last_digits_condition' />
+                <Block type='last_digits_odd_even_condition' />
+                <Block type='override_contract_type_purchase' />
                 <Block type='purchase' />
             </Category>
             <Category id='sell_conditions' name={localize('Sell conditions (optional)')}>
@@ -379,85 +395,6 @@ export const ToolboxItems = () =>
                     <Block type='tick_analysis' />
                     <Block type='tick' />
                     <Block type='last_digit' />
-                    <Block type='second_last_digit' />
-                    <Block type='nth_last_digit'>
-                        <Value name='INDEX'>
-                            <Shadow type='math_number'>
-                                <Field name='NUM'>3</Field>
-                            </Shadow>
-                        </Value>
-                    </Block>
-                    <Block type='last_digits_condition'>
-                        <Field name='CONDITION'>lt</Field>
-                        <Value name='COUNT'>
-                            <Shadow type='math_number'>
-                                <Field name='NUM'>3</Field>
-                            </Shadow>
-                        </Value>
-                        <Value name='DIGIT'>
-                            <Shadow type='math_number'>
-                                <Field name='NUM'>4</Field>
-                            </Shadow>
-                        </Value>
-                    </Block>
-                    <Block type='digit_frequency_analysis'>
-                        <Field name='RANK'>most</Field>
-                        <Value name='COUNT'>
-                            <Shadow type='math_number'>
-                                <Field name='NUM'>1000</Field>
-                            </Shadow>
-                        </Value>
-                    </Block>
-                    <Block type='even_odd_percentage'>
-                        <Field name='PARITY'>even</Field>
-                        <Value name='COUNT'>
-                            <Shadow type='math_number'>
-                                <Field name='NUM'>1000</Field>
-                            </Shadow>
-                        </Value>
-                    </Block>
-                    <Block type='over_under_percentage'>
-                        <Field name='CONDITION'>over</Field>
-                        <Value name='DIGIT'>
-                            <Shadow type='math_number'>
-                                <Field name='NUM'>4</Field>
-                            </Shadow>
-                        </Value>
-                        <Value name='COUNT'>
-                            <Shadow type='math_number'>
-                                <Field name='NUM'>1000</Field>
-                            </Shadow>
-                        </Value>
-                    </Block>
-                    <Block type='match_differ_percentage'>
-                        <Field name='MODE'>match</Field>
-                        <Value name='DIGIT'>
-                            <Shadow type='math_number'>
-                                <Field name='NUM'>5</Field>
-                            </Shadow>
-                        </Value>
-                        <Value name='COUNT'>
-                            <Shadow type='math_number'>
-                                <Field name='NUM'>1000</Field>
-                            </Shadow>
-                        </Value>
-                    </Block>
-                    <Block type='last_n_ticks_direction'>
-                        <Field name='DIRECTION'>rise</Field>
-                        <Value name='COUNT'>
-                            <Shadow type='math_number'>
-                                <Field name='NUM'>5</Field>
-                            </Shadow>
-                        </Value>
-                    </Block>
-                    <Block type='rise_fall_percentage'>
-                        <Field name='DIRECTION'>rise</Field>
-                        <Value name='COUNT'>
-                            <Shadow type='math_number'>
-                                <Field name='NUM'>1000</Field>
-                            </Shadow>
-                        </Value>
-                    </Block>
                     <Block type='stat' />
                     <Block type='stat_list' />
                     <Block type='ticks' />
