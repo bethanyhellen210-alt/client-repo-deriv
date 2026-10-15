@@ -593,6 +593,17 @@ const BotCard = observer(({ bot, stats }: { bot: TBot; stats: TBotStats | undefi
             setLoaded(true);
             setTimeout(() => setLoaded(false), 3000);
             setActiveTab(DBOT_TABS.BOT_BUILDER);
+
+            // Blockly is kept mounted while hidden on Free Bots. Resize only after
+            // the Builder tab becomes visible so its toolbox and workspace measure correctly.
+            window.requestAnimationFrame(() => {
+                window.requestAnimationFrame(() => {
+                    const active_workspace = window.Blockly?.derivWorkspace;
+                    if (active_workspace && typeof window.Blockly?.svgResize === 'function') {
+                        window.Blockly.svgResize(active_workspace);
+                    }
+                });
+            });
         } catch {
             setError(true);
             setTimeout(() => setError(false), 4000);
