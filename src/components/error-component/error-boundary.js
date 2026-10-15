@@ -17,7 +17,20 @@ class ErrorBoundary extends React.Component {
             info,
         });
     };
-    render = () => (this.state.hasError ? <ErrorComponent should_show_refresh={true} /> : this.props.children);
+    render = () => {
+        if (!this.state.hasError) return this.props.children;
+
+        return (
+            <ErrorComponent
+                header='Something went wrong'
+                message='The app could not finish loading. Please refresh and try again.'
+                redirect_label='Refresh'
+                redirectOnClick={() => window.location.reload()}
+                should_show_refresh={true}
+                should_redirect={false}
+            />
+        );
+    };
 }
 
 ErrorBoundary.propTypes = {
