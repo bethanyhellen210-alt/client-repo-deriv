@@ -25,7 +25,6 @@ const BotBuilder = observer(() => {
     const is_blockly_delete_listener_registered = React.useRef(false);
     const { isDesktop } = useDevice();
     const { onMount, onUnmount } = app;
-    const el_ref = React.useRef<HTMLInputElement | null>(null);
     const is_builder_tab_active = active_tab === DBOT_TABS.BOT_BUILDER && !is_preview_on_popup;
 
     const deleted_block_id = React.useRef<string | null>(null);
@@ -129,7 +128,7 @@ const BotBuilder = observer(() => {
                     pointerEvents: is_builder_tab_active ? undefined : 'none',
                 }}
             >
-                <div id='scratch_div' ref={el_ref}>
+                <div id='scratch_div'>
                     <WorkspaceWrapper />
                 </div>
             </div>
