@@ -199,7 +199,7 @@ const Scanner = observer(() => {
     const [ticks, setTicks] = useState<TTickPoint[]>([]);
     const [popupOpen, setPopupOpen] = useState(false);
     const [terminalDashboard, setTerminalDashboard] = useState<string[]>(['Analysis Dashboard']);
-    const [terminalBody, setTerminalBody] = useState<string[]>(['Connecting to server...']);
+    const [terminalBody, setTerminalBody] = useState<string[]>(['Waiting for live market data…']);
     const [isWorking, setIsWorking] = useState(false);
     const [sessionProfit, setSessionProfit] = useState(0);
     const subscriptionRef = useRef<{ unsubscribe?: () => void } | null>(null);
@@ -515,7 +515,7 @@ const Scanner = observer(() => {
         [dashboard, executeTradeFromTick, run_panel]
     );
 
-    const startFastMovingCodes = useCallback(
+    const runLiveAnalysis = useCallback(
         (nextMode: TScannerMode, stake: number, stopLoss: number, takeProfit: number) => {
             setTerminalBody(previous => [
                 ...previous,
@@ -590,9 +590,9 @@ const Scanner = observer(() => {
         completedRunsRef.current = 0;
         setPopupOpen(true);
         setTerminalDashboard([`Analysis Dashboard - ${strategy} on ${selectedSymbol}`]);
-        setTerminalBody(['Connecting to server...']);
+        setTerminalBody(['Reading live market ticks…']);
 
-        startFastMovingCodes(mode, stake, stopLoss, takeProfit);
+        runLiveAnalysis(mode, stake, stopLoss, takeProfit);
     };
 
     const handleClosePopup = () => {
