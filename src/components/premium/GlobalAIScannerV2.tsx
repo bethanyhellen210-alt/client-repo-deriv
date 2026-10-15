@@ -73,8 +73,17 @@ const clampPanel = (point: Point, reserveRight = 0): Point => {
 };
 
 const pipSize = (item: any) => {
-    const direct = Number(item?.pip_size ?? item?.decimal_places);
-    if (Number.isFinite(direct) && direct >= 0 && direct <= 10) return Math.round(direct);
+    const decimalPlaces = Number(item?.decimal_places);
+    if (Number.isFinite(decimalPlaces) && decimalPlaces >= 0 && decimalPlaces <= 10) {
+        return Math.round(decimalPlaces);
+    }
+
+    const pipSizeValue = Number(item?.pip_size);
+    if (Number.isInteger(pipSizeValue) && pipSizeValue >= 0 && pipSizeValue <= 10) return pipSizeValue;
+    if (Number.isFinite(pipSizeValue) && pipSizeValue > 0 && pipSizeValue < 1) {
+        return Math.max(0, Math.round(-Math.log10(pipSizeValue)));
+    }
+
     const pip = Number(item?.pip);
     return Number.isFinite(pip) && pip > 0 && pip < 1 ? Math.max(0, Math.round(-Math.log10(pip))) : 2;
 };
