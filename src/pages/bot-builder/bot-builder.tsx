@@ -26,8 +26,9 @@ const BotBuilder = observer(() => {
     const { isDesktop } = useDevice();
     const { onMount, onUnmount } = app;
     const el_ref = React.useRef<HTMLInputElement | null>(null);
+    const is_builder_tab_active = active_tab === DBOT_TABS.BOT_BUILDER && !is_preview_on_popup;
 
-    let deleted_block_id: null | string = null;
+    const deleted_block_id = React.useRef<string | null>(null);
 
     React.useEffect(() => {
         onMount();
@@ -72,21 +73,27 @@ const BotBuilder = observer(() => {
             workspace.addChangeListener(handleBlockDelete);
         }
 
+        return () => {
+            if (workspace && is_blockly_delete_listener_registered.current) {
+                workspace.removeChangeListener(handleBlockDelete);
+                is_blockly_delete_listener_registered.current = false;
+            }
+        };
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [is_loading]);
 
     const handleBlockDelete = (e: TBlocklyEvents) => {
         const { is_reset_button_clicked, setResetButtonState } = toolbar;
         if (e.type === 'undo') {
-            deleted_block_id = null;
+            deleted_block_id.current = null;
             return;
         }
         if (e.type === 'delete' && !is_reset_button_clicked) {
-            deleted_block_id = e.blockId;
+            deleted_block_id.current = e.blockId;
         }
-        if (e.type === 'selected' && deleted_block_id === e.oldElementId) {
+        if (e.type === 'selected' && deleted_block_id.current === e.oldElementId) {
             handleBlockDeleteNotification();
-            deleted_block_id = null;
+            deleted_block_id.current = null;
         }
         if (
             e.type === 'change' &&
@@ -112,24 +119,24 @@ const BotBuilder = observer(() => {
         <>
             <div
                 className={classNames('bot-builder', {
-                    'bot-builder--active': active_tab === DBOT_TABS.BOT_BUILDER && !is_preview_on_popup,
+                    'bot-builder--active': is_builder_tab_active,
                     'bot-builder--inactive': is_preview_on_popup,
                     'bot-builder--tour-active': active_tour,
                 })}
                 style={{
                     // The builder is mounted globally, so explicitly hide it on every other tab.
-                    display: active_tab === DBOT_TABS.BOT_BUILDER && !is_preview_on_popup ? undefined : 'none',
+                    display: is_builder_tab_active ? undefined : 'none',
+                    pointerEvents: is_builder_tab_active ? undefined : 'none',
                 }}
             >
                 <div id='scratch_div' ref={el_ref}>
                     <WorkspaceWrapper />
                 </div>
             </div>
-            {active_tab === DBOT_TABS.BOT_BUILDER && <BotBuilderTourHandler is_mobile={!isDesktop} />}
-            {/* removed this outside from toolbar becuase it needs to loaded seperately without dependency */}
+            {is_builder_tab_active && <BotBuilderTourHandler is_mobile={!isDesktop} />}
             <LoadModal />
             <SaveModal />
-            {is_open && <QuickStrategy1 />}
+            {is_builder_tab_active && is_open && <QuickStrategy1 />}
         </>
     );
 });
