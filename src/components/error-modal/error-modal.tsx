@@ -6,17 +6,44 @@ import Modal from '../shared_ui/modal';
 import ErrorModalContent from './error-modal-content';
 
 type TMessageObject = {
-    message: string;
-    toString: () => string;
+    message?: string;
+    toString?: () => string;
 };
 
 type TErrorModalProps = {
     messages: Array<TMessageObject | React.ReactNode>;
 };
 
+const getErrorDescription = (message: TMessageObject | React.ReactNode | undefined): string => {
+    if (message == null) return '';
+
+    if (typeof message === 'string' || typeof message === 'number') {
+        return String(message);
+    }
+
+    if (React.isValidElement(message)) {
+        return '';
+    }
+
+    if (typeof message === 'object' && 'message' in message && typeof message.message === 'string') {
+        return message.message;
+    }
+
+    if (message instanceof Error) {
+        return message.message;
+    }
+
+    if (typeof message === 'object' && typeof message.toString === 'function') {
+        const value = message.toString();
+        return value === '[object Object]' ? '' : value;
+    }
+
+    return '';
+};
+
 const ErrorModal = ({ messages }: TErrorModalProps) => {
     const [is_error_modal_open, setErrorModalOpen] = React.useState(false);
-    const error_message_description = messages?.[0]?.toString();
+    const error_message_description = getErrorDescription(messages?.[0]);
 
     React.useEffect(() => {
         setErrorModalOpen(true);
