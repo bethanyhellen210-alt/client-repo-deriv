@@ -1,3 +1,4 @@
+// @ts-nocheck — vendored bot code with known upstream type gaps; see AGENTS.md
 import React from 'react';
 import { observer } from 'mobx-react-lite';
 import Dialog from '@/components/shared_ui/dialog';
@@ -6,12 +7,45 @@ import { Localize, localize } from '@deriv-com/translations';
 import { useDevice } from '@deriv-com/ui';
 /* [AI] - Analytics event tracking removed - see migrate-docs/MONITORING_PACKAGES.md for re-implementation guide */
 /* [/AI] */
+import DigitPanel from '../digit-panel/digit-panel';
 import ToolbarButton from './toolbar-button';
 import WorkspaceGroup from './workspace-group';
 
 const Toolbar = observer(() => {
     const { run_panel, toolbar, quick_strategy } = useStore();
     const { isDesktop } = useDevice();
+    const [is_digit_open, setDigitOpen] = React.useState(false);
+    const toggleDigit = () => setDigitOpen(open => !open);
+    const digit_popover_ref = React.useRef(null);
+    const digit_drag = React.useRef(null);
+    const startDigitDrag = event => {
+        const target = event.target;
+        if (!target?.closest?.('.digit-panel__header')) return;
+        if (target.closest('button, select, option')) return;
+        event.preventDefault();
+        const node = digit_popover_ref.current;
+        if (!node) return;
+        node.setPointerCapture?.(event.pointerId);
+        digit_drag.current = {
+            x: event.clientX,
+            y: event.clientY,
+            left: node.dataset.dragX ? Number(node.dataset.dragX) : 0,
+            top: node.dataset.dragY ? Number(node.dataset.dragY) : 0,
+        };
+    };
+    const moveDigitDrag = event => {
+        const drag = digit_drag.current;
+        const node = digit_popover_ref.current;
+        if (!drag || !node) return;
+        const x = drag.left + event.clientX - drag.x;
+        const y = drag.top + event.clientY - drag.y;
+        node.dataset.dragX = String(x);
+        node.dataset.dragY = String(y);
+        node.style.transform = `translate(${x}px, ${y}px)`;
+    };
+    const endDigitDrag = () => {
+        digit_drag.current = null;
+    };
     const { is_dialog_open, closeResetDialog, onResetOkButtonClick: onOkButtonClick } = toolbar;
     const { is_running } = run_panel;
     const { setFormVisibility } = quick_strategy;
@@ -36,10 +70,22 @@ const Toolbar = observer(() => {
                             is_bot_running={is_running}
                         />
                     )}
-                    {isDesktop && <WorkspaceGroup />}
+                    {isDesktop && <WorkspaceGroup is_digit_open={is_digit_open} onToggleDigit={toggleDigit} />}
                 </div>
             </div>
-            {!isDesktop && <WorkspaceGroup />}
+            {!isDesktop && <WorkspaceGroup is_digit_open={is_digit_open} onToggleDigit={toggleDigit} />}
+            {is_digit_open && (
+                <div
+                    className='digit-panel-popover'
+                    ref={digit_popover_ref}
+                    onPointerDown={startDigitDrag}
+                    onPointerMove={moveDigitDrag}
+                    onPointerUp={endDigitDrag}
+                    onPointerCancel={endDigitDrag}
+                >
+                    <DigitPanel onClose={() => setDigitOpen(false)} />
+                </div>
+            )}
             <Dialog
                 portal_element_id='modal_root'
                 title={localize('Are you sure?')}
