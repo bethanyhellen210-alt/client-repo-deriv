@@ -57,6 +57,12 @@ const DigitPanel = ({ onClose }: DigitPanelProps) => {
     }, [selectedSymbol, setSelectedSymbol, trade.symbol]);
 
     const board = useMemo(() => computeDigitDistribution(ticks, tickSampleSize), [tickSampleSize, ticks]);
+    const validDigitCount = board.counts.reduce((total, count) => total + count, 0);
+    const matchPercent =
+        board.hotDigit === null || validDigitCount === 0
+            ? 0
+            : Math.round((board.counts[board.hotDigit] / validDigitCount) * 1000) / 10;
+    const differPercent = validDigitCount ? Math.round((100 - matchPercent) * 10) / 10 : 0;
     const priceText = status === 'loading' ? '…' : formatAnalysisPrice(board.lastPrice, selectedSymbolInfo?.pip);
     const price = splitPrice(priceText);
     const selectedOption = trade.options.find(option => option.value === (trade.symbol || selectedSymbol));
@@ -179,6 +185,12 @@ const DigitPanel = ({ onClose }: DigitPanelProps) => {
                         right={`${localize('Under')} ${UNDER_DIGIT}`}
                         leftPercent={board.overPercent}
                         rightPercent={board.underPercent}
+                    />
+                    <SplitBar
+                        left={`${localize('Matches')} ${board.hotDigit ?? '—'}`}
+                        right={`${localize('Differs')} ${board.hotDigit ?? '—'}`}
+                        leftPercent={matchPercent}
+                        rightPercent={differPercent}
                     />
                 </div>
             </div>
