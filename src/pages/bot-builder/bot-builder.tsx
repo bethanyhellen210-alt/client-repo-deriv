@@ -116,6 +116,10 @@ const BotBuilder = observer(() => {
                     'bot-builder--inactive': is_preview_on_popup,
                     'bot-builder--tour-active': active_tour,
                 })}
+                style={{
+                    // The builder is mounted globally, so explicitly hide it on every other tab.
+                    display: active_tab === DBOT_TABS.BOT_BUILDER && !is_preview_on_popup ? undefined : 'none',
+                }}
             >
                 <div id='scratch_div' ref={el_ref}>
                     <WorkspaceWrapper />
