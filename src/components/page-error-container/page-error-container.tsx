@@ -15,14 +15,19 @@ type TPageErrorContainer = {
 };
 
 const PageErrorContainer = ({ error_header, error_messages, ...props }: TPageErrorContainer) => {
-    if (error_header && error_messages) {
+    const has_error_messages = Boolean(error_messages?.length);
+
+    if (error_header && has_error_messages) {
         return <PageError header={error_header} messages={error_messages} {...props} />;
     }
-    // If there are error messages from the backend, show an error modal with the messages
-    else if (error_messages) {
+
+    // Only show an error modal when the caller supplied real backend messages.
+    // An empty array is a valid prop value and must not be treated as an error.
+    if (has_error_messages) {
         return <ErrorModal messages={error_messages} />;
     }
-    return <UnhandledErrorModal />;
+
+    return null;
 };
 
 export default PageErrorContainer;
