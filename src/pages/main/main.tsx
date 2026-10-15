@@ -526,6 +526,7 @@ const AppWrapper = observer(() => {
                                 }
                                 id='id-bot-builder'
                             >
+                                <BotBuilder />
                             </div>
                             <div
                                 label={
@@ -715,7 +716,6 @@ const AppWrapper = observer(() => {
                     </div>
                 </div>
             </div>
-            <BotBuilder />
             <GlobalAIScannerV2 openBotBuilder={() => setActiveTab(DBOT_TABS.BOT_BUILDER)} />
             <RiskDisclaimerFloating />
             <DesktopWrapper>
