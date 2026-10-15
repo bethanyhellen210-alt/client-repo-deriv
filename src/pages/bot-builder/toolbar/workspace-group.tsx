@@ -1,41 +1,36 @@
 import classNames from 'classnames';
 import { observer } from 'mobx-react-lite';
-import { isDomainFeatureEnabled } from '@/components/shared';
 import { useStore } from '@/hooks/useStore';
 import {
     LabelPairedArrowRotateLeftMdRegularIcon,
     LabelPairedArrowRotateRightMdRegularIcon,
     LabelPairedArrowsRotateMdRegularIcon,
     LabelPairedChartLineMdRegularIcon,
+    LabelPairedChartTradingviewMdRegularIcon,
     LabelPairedFloppyDiskMdRegularIcon,
     LabelPairedFolderOpenMdRegularIcon,
     LabelPairedMagnifyingGlassMinusMdRegularIcon,
     LabelPairedMagnifyingGlassPlusMdRegularIcon,
     LabelPairedObjectsAlignLeftMdRegularIcon,
-} from '@/components/shared_ui/figma-icons/LabelPaired';
+} from '@deriv/quill-icons/LabelPaired';
 import { localize } from '@deriv-com/translations';
 import { useDevice } from '@deriv-com/ui';
 /* [AI] - Analytics event tracking removed - see migrate-docs/MONITORING_PACKAGES.md for re-implementation guide */
 /* [/AI] */
 import ToolbarIcon from './toolbar-icon';
 
-const WorkspaceGroup = observer(() => {
+type WorkspaceGroupProps = {
+    is_digit_open: boolean;
+    onToggleDigit: () => void;
+};
+
+const WorkspaceGroup = observer(({ is_digit_open, onToggleDigit }: WorkspaceGroupProps) => {
     const { dashboard, toolbar, load_modal, save_modal } = useStore();
-    const { setPreviewOnPopup, setChartModalVisibility } = dashboard;
-    const {
-        has_redo_stack,
-        has_undo_stack,
-        is_strategy_protected,
-        notifyProtectedAction,
-        onResetClick,
-        onSortClick,
-        onUndoClick,
-        onZoomInOutClick,
-    } = toolbar;
+    const { setPreviewOnPopup, setChartModalVisibility, setTradingViewModalVisibility } = dashboard;
+    const { has_redo_stack, has_undo_stack, onResetClick, onSortClick, onUndoClick, onZoomInOutClick } = toolbar;
     const { toggleSaveModal } = save_modal;
     const { toggleLoadModal } = load_modal;
     const { isDesktop } = useDevice();
-    const show_chart = isDomainFeatureEnabled('chart');
 
     return (
         <div className='toolbar__wrapper'>
@@ -78,9 +73,30 @@ const WorkspaceGroup = observer(() => {
                             className='toolbar__icon'
                             id='db-toolbar__save-button'
                             data-testid='dt_toolbar_save_button'
-                            onClick={is_strategy_protected ? () => notifyProtectedAction() : toggleSaveModal}
+                            onClick={toggleSaveModal}
                         >
                             <LabelPairedFloppyDiskMdRegularIcon />
+                        </span>
+                    }
+                />
+                <ToolbarIcon
+                    popover_message={localize('Digit distribution')}
+                    icon={
+                        <span
+                            className={classNames('toolbar__icon', {
+                                'toolbar__icon--active': is_digit_open,
+                            })}
+                            id='db-toolbar__digits-button'
+                            data-testid='dt_toolbar_digits_button'
+                            onClick={onToggleDigit}
+                        >
+                            <svg viewBox='0 0 16 16' width='16' height='16' aria-hidden='true'>
+                                {[0, 1, 2].map(row =>
+                                    [0, 1, 2].map(column => (
+                                        <circle key={`${row}-${column}`} cx={2.5 + column * 5.5} cy={2.5 + row * 5.5} r='1.35' />
+                                    ))
+                                )}
+                            </svg>
                         </span>
                     }
                 />
@@ -97,7 +113,7 @@ const WorkspaceGroup = observer(() => {
                         </span>
                     }
                 />
-                {isDesktop && show_chart && (
+                {isDesktop && (
                     <>
                         <div className='vertical-divider' />
                         <ToolbarIcon
@@ -109,6 +125,18 @@ const WorkspaceGroup = observer(() => {
                                     onClick={() => setChartModalVisibility()}
                                 >
                                     <LabelPairedChartLineMdRegularIcon />
+                                </span>
+                            }
+                        />
+                        <ToolbarIcon
+                            popover_message={localize('TradingView Chart')}
+                            icon={
+                                <span
+                                    className='toolbar__icon'
+                                    id='db-toolbar__tradingview-button'
+                                    onClick={() => setTradingViewModalVisibility()}
+                                >
+                                    <LabelPairedChartTradingviewMdRegularIcon />
                                 </span>
                             }
                         />
