@@ -14,6 +14,7 @@ import {
     LabelPairedObjectsAlignLeftMdRegularIcon,
 } from '@deriv/quill-icons/LabelPaired';
 import { localize } from '@deriv-com/translations';
+import { DBOT_TABS } from '@/constants/bot-contents';
 import { useDevice } from '@deriv-com/ui';
 /* [AI] - Analytics event tracking removed - see migrate-docs/MONITORING_PACKAGES.md for re-implementation guide */
 /* [/AI] */
@@ -76,6 +77,27 @@ const WorkspaceGroup = observer(({ is_digit_open, onToggleDigit }: WorkspaceGrou
                             onClick={toggleSaveModal}
                         >
                             <LabelPairedFloppyDiskMdRegularIcon />
+                        </span>
+                    }
+                />
+                <ToolbarIcon
+                    popover_message={localize('Open Analysis')}
+                    icon={
+                        <span
+                            className='toolbar__icon'
+                            id='db-toolbar__analysis-button'
+                            data-testid='dt_toolbar_analysis_button'
+                            role='button'
+                            tabIndex={0}
+                            onClick={() => dashboard.setActiveTab(DBOT_TABS.ANALYSIS_TOOL)}
+                            onKeyDown={event => {
+                                if (event.key === 'Enter' || event.key === ' ') {
+                                    event.preventDefault();
+                                    dashboard.setActiveTab(DBOT_TABS.ANALYSIS_TOOL);
+                                }
+                            }}
+                        >
+                            <LabelPairedChartLineMdRegularIcon />
                         </span>
                     }
                 />
