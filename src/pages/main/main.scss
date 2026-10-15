@@ -74,8 +74,8 @@
         }
 
         &--with-open-run-panel {
-            width: calc(100% - 38.2rem);
-            max-width: calc(100% - 38.2rem);
+            width: calc(100% - 30rem);
+            max-width: calc(100% - 30rem);
             transition: width 0.3s ease;
         }
 
@@ -292,8 +292,8 @@
         inset-inline-end: 1.6rem;
         top: 1.6rem;
         z-index: 2;
-        width: min(100%, 33.6rem);
-        max-width: min(33.6rem, calc(100vw - 43rem));
+        width: min(100%, 27rem);
+        max-width: min(27rem, calc(100vw - 32rem));
         min-width: 0;
 
         @include desktop-screen {
@@ -301,8 +301,8 @@
         }
 
         @media (width <= 1400px) {
-            width: min(100%, 29.6rem);
-            max-width: min(29.6rem, calc(100vw - 41rem));
+            width: min(100%, 25rem);
+            max-width: min(25rem, calc(100vw - 31rem));
         }
 
         .animation {
