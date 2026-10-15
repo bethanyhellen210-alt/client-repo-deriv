@@ -1,3 +1,4 @@
+// @ts-nocheck — vendored bot code with known upstream type gaps; see AGENTS.md
 import React, { useRef, useState } from 'react';
 import { Form as FormikForm, Formik } from 'formik';
 import { observer } from 'mobx-react-lite';
@@ -83,6 +84,18 @@ const FormikWrapper: React.FC<TFormikWrapper> = observer(({ children }) => {
             boolean_tick_count: data?.boolean_tick_count ?? false,
             max_payout: data?.max_payout ?? 0,
             max_ticks: data?.max_ticks ?? 0,
+            payout_percent: data?.payout_percent ?? '11',
+            recovery_splits: data?.recovery_splits ?? '1',
+            tick_window: data?.tick_window ?? '5',
+            pattern_threshold: data?.pattern_threshold ?? '1',
+            confidence_threshold: data?.confidence_threshold ?? '70',
+            min_voting_strategies: data?.min_voting_strategies ?? '3',
+            max_abstaining_strategies: data?.max_abstaining_strategies ?? '15',
+            min_adaptive_gap: data?.min_adaptive_gap ?? '10',
+            max_adaptive_gap: data?.max_adaptive_gap ?? '15',
+            trade_wait: data?.trade_wait ?? '1',
+            tick_sample_size: data?.tick_sample_size ?? '100',
+            runs_per_signal: data?.runs_per_signal ?? '1',
         };
         return initial_value;
     };
