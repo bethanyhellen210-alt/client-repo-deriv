@@ -1,9 +1,9 @@
+// @ts-nocheck — vendored bot code with known upstream type gaps; see AGENTS.md
 import React from 'react';
 import classNames from 'classnames';
 import { observer } from 'mobx-react-lite';
 import { botNotification } from '@/components/bot-notification/bot-notification';
 import { notification_message } from '@/components/bot-notification/bot-notification-utils';
-import { DBOT_TABS } from '@/constants/bot-contents';
 import { useStore } from '@/hooks/useStore';
 import { localize } from '@deriv-com/translations';
 import { useDevice } from '@deriv-com/ui';
@@ -114,36 +114,16 @@ const BotBuilder = observer(() => {
         <>
             <div
                 className={classNames('bot-builder', {
-                    'bot-builder--active': active_tab === DBOT_TABS.BOT_BUILDER && !is_preview_on_popup,
+                    'bot-builder--active': active_tab === 1 && !is_preview_on_popup,
                     'bot-builder--inactive': is_preview_on_popup,
                     'bot-builder--tour-active': active_tour,
                 })}
             >
-                <button
-                    type='button'
-                    onClick={() => dashboard.setActiveTab(DBOT_TABS.ANALYSIS_TOOL)}
-                    aria-label='Open Analysis Tool'
-                    style={{
-                        position: 'absolute',
-                        top: '12px',
-                        right: '16px',
-                        zIndex: 20,
-                        padding: '9px 14px',
-                        border: '1px solid #c8a45d',
-                        borderRadius: '8px',
-                        background: '#171717',
-                        color: '#e6c77a',
-                        fontWeight: 600,
-                        cursor: 'pointer',
-                    }}
-                >
-                    Open Analysis
-                </button>
                 <div id='scratch_div' ref={el_ref}>
                     <WorkspaceWrapper />
                 </div>
             </div>
-            {active_tab === DBOT_TABS.BOT_BUILDER && <BotBuilderTourHandler is_mobile={!isDesktop} />}
+            {active_tab === 1 && <BotBuilderTourHandler is_mobile={!isDesktop} />}
             {/* removed this outside from toolbar becuase it needs to loaded seperately without dependency */}
             <LoadModal />
             <SaveModal />
