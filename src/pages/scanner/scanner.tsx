@@ -29,7 +29,6 @@ const DEFAULT_STAKE = '10';
 const DEFAULT_STOP_LOSS = '500';
 const DEFAULT_TAKE_PROFIT = '500';
 const PROFIT_CHECK_RUNS = 5;
-const TIMER_SOUND_URL = 'https://www.fesliyanstudios.com/play-mp3/4386';
 
 const MARKETS = [
     { label: 'Volatility 10 Index', symbol: 'R_10' },
@@ -48,37 +47,6 @@ const STRATEGIES: TScannerStrategy[] = ['Matches & Differs', 'Even & Odd', 'Over
 
 const cleanMoneyInput = (value: string) => value.replace(/[^\d.]/g, '').replace(/(\..*)\./g, '$1');
 
-const generateRandomCode = () => {
-    const chars = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ$#@!%^&*()';
-    let result = '';
-    for (let i = 0; i < 40; i++) {
-        result += chars.charAt(Math.floor(Math.random() * chars.length));
-    }
-    return result;
-};
-
-const generateFakeLogs = () => {
-    const logs = [
-        '[INFO] Connecting to server... [OK]',
-        '[INFO] Authenticating API key... [OK]',
-        '[WARNING] Unstable connection detected...',
-        '[ERROR] Connection timeout. Retrying...',
-        '[INFO] Fetching market data... [OK]',
-        '[INFO] Analysing Volatility Index...',
-        '[SUCCESS] Data stream established...',
-        '[SECURITY] Encryption enabled...',
-        '[INFO] Predicting next digit...',
-        '[WARNING] High market volatility detected...',
-        '[INFO] Compiling results...',
-        '[INFO] Data transmission complete...',
-    ];
-    let line = '';
-    for (let i = 0; i < 10; i++) {
-        line += `${logs[Math.floor(Math.random() * logs.length)]} `;
-    }
-    return line;
-};
-
 const findLeastCommonDigit = (digits: number[]) => {
     const counts: Record<number, number> = {};
     for (const digit of digits) {
@@ -96,14 +64,6 @@ const findLeastCommonDigit = (digits: number[]) => {
     }
 
     return leastCommon ?? digits[0] ?? 0;
-};
-
-const getRandomEntryPoints = (count: number) => {
-    const entryPoints: number[] = [];
-    for (let i = 0; i < count; i++) {
-        entryPoints.push(Math.floor(Math.random() * 10));
-    }
-    return entryPoints;
 };
 
 const getQuoteFromTick = (data: any): TTickPoint | null => {
@@ -163,7 +123,6 @@ const buildAnalysis = (strategy: TScannerStrategy, ticks: TTickPoint[], symbol: 
 
         if (evenCount > oddCount) {
             lines.push(`EVEN numbers dominate (${evenPercentage}%)`);
-            lines.push(getRandomEntryPoints(3).join(', '));
             lines.push(
                 'Entry Point: Run your bot whenever an even number appears after a sequence of 3 or more consecutive odd numbers.'
             );
@@ -193,7 +152,6 @@ const buildAnalysis = (strategy: TScannerStrategy, ticks: TTickPoint[], symbol: 
             const leastCommonOver = findLeastCommonDigit(overDigits);
             lines.push(`OVER (0-4) with ${overPercentage}%`);
             lines.push(`Recommended digit: ${leastCommonOver}`);
-            lines.push(`Entry Points: ${getRandomEntryPoints(3).join(', ')}`);
             signal = { barrier: String(leastCommonOver), contractType: 'DIGITOVER', label: `Over ${leastCommonOver}` };
         } else {
             const underDigits = lastDigits.filter(digit => digit >= 5);
@@ -244,7 +202,6 @@ const Scanner = observer(() => {
     const [popupOpen, setPopupOpen] = useState(false);
     const [terminalDashboard, setTerminalDashboard] = useState<string[]>(['Analysis Dashboard']);
     const [terminalBody, setTerminalBody] = useState<string[]>(['Connecting to server...']);
-    const [scrollingText, setScrollingText] = useState('');
     const [isWorking, setIsWorking] = useState(false);
     const [sessionProfit, setSessionProfit] = useState(0);
     const subscriptionRef = useRef<{ unsubscribe?: () => void } | null>(null);
@@ -261,7 +218,6 @@ const Scanner = observer(() => {
     const strategyRef = useRef<TScannerStrategy>(strategy);
     const selectedSymbolRef = useRef(selectedSymbol);
     const handleTradeTickRef = useRef<(currentTicks: TTickPoint[]) => void>(() => undefined);
-    const timerSoundRef = useRef<HTMLAudioElement | null>(null);
     const currency = client.currency || 'USD';
     const showScanner = active_tab === DBOT_TABS.SCANNER;
     const isCoveredByMobileRunPanel = !isDesktop && run_panel.is_drawer_open;
@@ -281,58 +237,6 @@ const Scanner = observer(() => {
     useEffect(() => {
         selectedSymbolRef.current = selectedSymbol;
     }, [selectedSymbol]);
-
-    useEffect(() => {
-        timerSoundRef.current = new Audio(TIMER_SOUND_URL);
-        timerSoundRef.current.preload = 'auto';
-        timerSoundRef.current.loop = true;
-
-        return () => {
-            timerSoundRef.current?.pause();
-            timerSoundRef.current = null;
-        };
-    }, []);
-
-    const stopTimerSound = useCallback(() => {
-        const sound = timerSoundRef.current;
-        if (!sound) return;
-        sound.pause();
-        sound.currentTime = 0;
-    }, []);
-
-    const playTimerSound = useCallback(() => {
-        const sound = timerSoundRef.current;
-        if (!sound) return;
-
-        sound.currentTime = 0;
-        sound.loop = true;
-        const playPromise = sound.play();
-
-        if (playPromise) {
-            playPromise.catch(() => {
-                const enableSound = () => {
-                    sound.play().catch(() => undefined);
-                };
-                document.addEventListener('click', enableSound, { once: true });
-            });
-        }
-    }, []);
-
-    useEffect(() => {
-        if (!showScanner) return undefined;
-
-        const updateScrollingText = () => {
-            let text = '';
-            for (let i = 0; i < 100; i++) {
-                text += `${generateFakeLogs()}\n`;
-            }
-            setScrollingText(text + text);
-        };
-
-        updateScrollingText();
-        const interval = setInterval(updateScrollingText, 200);
-        return () => clearInterval(interval);
-    }, [showScanner]);
 
     const unsubscribe = useCallback(() => {
         try {
@@ -616,55 +520,40 @@ const Scanner = observer(() => {
 
     const startFastMovingCodes = useCallback(
         (nextMode: TScannerMode, stake: number, stopLoss: number, takeProfit: number) => {
-            playTimerSound();
-            setTerminalBody(previous => [...previous, 'Running deep analysis...']);
+            setTerminalBody(previous => [
+                ...previous,
+                `Analyzing ${ticksRef.current.length} live ticks from ${selectedSymbol}…`,
+            ]);
+            const analysis = buildAnalysis(strategy, ticksRef.current, selectedSymbol);
+            setTerminalDashboard(previous => [...previous, ...analysis.lines]);
 
-            const codeInterval = setInterval(() => {
+            let count = 5;
+            const countdownInterval = setInterval(() => {
                 if (shouldStopRef.current) {
-                    clearInterval(codeInterval);
-                    return;
-                }
-                setTerminalBody(previous => [...previous.slice(-49), generateRandomCode()]);
-            }, 50);
-
-            setTimeout(() => {
-                clearInterval(codeInterval);
-                stopTimerSound();
-                if (shouldStopRef.current) {
+                    clearInterval(countdownInterval);
                     setIsWorking(false);
                     return;
                 }
-                const analysis = buildAnalysis(strategy, ticksRef.current, selectedSymbol);
-                setTerminalDashboard(previous => [...previous, ...analysis.lines]);
 
-                let count = 5;
-                const countdownInterval = setInterval(() => {
-                    if (shouldStopRef.current) {
-                        clearInterval(countdownInterval);
+                setTerminalDashboard(previous => [...previous, `Starting in ${count} seconds…`]);
+                count -= 1;
+
+                if (count < 0) {
+                    clearInterval(countdownInterval);
+                    setTerminalDashboard(previous => [
+                        ...previous,
+                        nextMode === 'Trade' ? 'Live trade execution started.' : 'Analysis complete.',
+                    ]);
+
+                    if (nextMode === 'Trade') {
+                        startScannerTrading(analysis.signal, stake, stopLoss, takeProfit);
+                    } else {
                         setIsWorking(false);
-                        return;
                     }
-
-                    setTerminalDashboard(previous => [...previous, `Running bot in ${count} seconds...`]);
-                    count--;
-
-                    if (count < 0) {
-                        clearInterval(countdownInterval);
-                        setTerminalDashboard(previous => [
-                            ...previous,
-                            nextMode === 'Trade' ? 'Bot activated!' : 'Analysis mode complete.',
-                        ]);
-
-                        if (nextMode === 'Trade') {
-                            startScannerTrading(analysis.signal, stake, stopLoss, takeProfit);
-                        } else {
-                            setIsWorking(false);
-                        }
-                    }
-                }, 1000);
-            }, 5000);
+                }
+            }, 1000);
         },
-        [playTimerSound, selectedSymbol, startScannerTrading, stopTimerSound, strategy]
+        [selectedSymbol, startScannerTrading, strategy]
     );
 
     const handleAnalyze = () => {
@@ -706,33 +595,7 @@ const Scanner = observer(() => {
         setTerminalDashboard([`Analysis Dashboard - ${strategy} on ${selectedSymbol}`]);
         setTerminalBody(['Connecting to server...']);
 
-        const messages = [
-            `Analysing ${strategy} on ${selectedSymbol}...`,
-            'Retrieving market data...',
-            'Error: Timeout connecting to node...',
-            'Attempting reconnect...',
-            'Data stream detected...',
-            'Error: Unstable connection...',
-            'Finalizing analysis...',
-        ];
-
-        let index = 0;
-        const interval = setInterval(() => {
-            if (shouldStopRef.current) {
-                clearInterval(interval);
-                setIsWorking(false);
-                return;
-            }
-
-            if (index < messages.length) {
-                const nextMessage = messages[index];
-                setTerminalBody(previous => [...previous, nextMessage]);
-                index++;
-            } else {
-                clearInterval(interval);
-                startFastMovingCodes(mode, stake, stopLoss, takeProfit);
-            }
-        }, 1000);
+        startFastMovingCodes(mode, stake, stopLoss, takeProfit);
     };
 
     const handleClosePopup = () => {
