@@ -524,7 +524,9 @@ const AppWrapper = observer(() => {
                                     </>
                                 }
                                 id='id-bot-builder'
-                            />
+                            >
+                                <span className='sr-only' aria-hidden='true'>Bot Builder workspace</span>
+                            </div>
                             <div
                                 label={
                                     <>
