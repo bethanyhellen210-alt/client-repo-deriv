@@ -129,7 +129,6 @@ const buildAnalysis = (strategy: TScannerStrategy, ticks: TTickPoint[], symbol: 
             signal = { contractType: 'DIGITEVEN', label: 'Even' };
         } else {
             lines.push(`ODD numbers dominate (${oddPercentage}%)`);
-            lines.push(getRandomEntryPoints(3).join(', '));
             lines.push(
                 'Entry Point: Run your bot whenever an odd number appears after a sequence of 3 or more consecutive even numbers.'
             );
@@ -158,7 +157,6 @@ const buildAnalysis = (strategy: TScannerStrategy, ticks: TTickPoint[], symbol: 
             const leastCommonUnder = findLeastCommonDigit(underDigits);
             lines.push(`UNDER (5-9) with ${underPercentage}%`);
             lines.push(`Recommended digit: ${leastCommonUnder}`);
-            lines.push(`Entry Points: ${getRandomEntryPoints(3).join(', ')}`);
             signal = {
                 barrier: String(leastCommonUnder),
                 contractType: 'DIGITUNDER',
@@ -251,7 +249,6 @@ const Scanner = observer(() => {
         shouldStopRef.current = true;
         tradeActiveRef.current = false;
         setIsWorking(false);
-        stopTimerSound();
 
         try {
             run_panel.setIsRunning(false);
@@ -261,7 +258,7 @@ const Scanner = observer(() => {
         }
 
         dashboard.setActiveTradingModule(null);
-    }, [dashboard, run_panel, stopTimerSound]);
+    }, [dashboard, run_panel]);
 
     const applyLiveTick = useCallback((tick: TTickPoint) => {
         const nextTicks = [...ticksRef.current, tick].slice(-MAX_TICKS);
@@ -623,9 +620,6 @@ const Scanner = observer(() => {
 
     return (
         <div className={`scanner-page${isCoveredByMobileRunPanel ? ' scanner-page--run-panel-open' : ''}`}>
-            <div className='background'>
-                <div className='scrolling-text'>{scrollingText}</div>
-            </div>
             <div className='container'>
                 <h1> Signal Analyzer</h1>
                 <label htmlFor='strategy'>Select Strategy</label>
