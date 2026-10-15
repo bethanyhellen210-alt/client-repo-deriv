@@ -9,7 +9,9 @@ const Analysis = () => {
 
     return (
         <div className='digit-panel-page'>
-            <RunStrategy />
+            <div className='analysis-run-control'>
+                <RunStrategy />
+            </div>
             <DigitPanel onClose={() => dashboard.setActiveTab(DBOT_TABS.BOT_BUILDER)} />
         </div>
     );
