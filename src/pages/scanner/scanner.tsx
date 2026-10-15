@@ -596,7 +596,6 @@ const Scanner = observer(() => {
     };
 
     const handleClosePopup = () => {
-        stopTimerSound();
         stopTrading();
         setPopupOpen(false);
     };
