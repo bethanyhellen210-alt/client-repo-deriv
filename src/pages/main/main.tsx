@@ -50,6 +50,7 @@ import ChartModal from '../chart/chart-modal';
 import ChartWrapper from '../chart/chart-wrapper';
 import Dashboard from '../dashboard';
 import ManualTrading from '../manual-trading';
+import GlobalAIScannerV2 from '@/components/premium/GlobalAIScannerV2';
 import RunStrategy from '../dashboard/run-strategy';
 import Analysistool from '../analysistool';
 import Accumilatoirs from '../accumilatoirs';
@@ -712,6 +713,7 @@ const AppWrapper = observer(() => {
                     </div>
                 </div>
             </div>
+            <GlobalAIScannerV2 openBotBuilder={() => setActiveTab(DBOT_TABS.BOT_BUILDER)} />
             <RiskDisclaimerFloating />
             <DesktopWrapper>
                 {should_show_run_panel && (
