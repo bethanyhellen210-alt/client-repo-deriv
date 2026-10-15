@@ -119,6 +119,26 @@ const BotBuilder = observer(() => {
                     'bot-builder--tour-active': active_tour,
                 })}
             >
+                <button
+                    type='button'
+                    onClick={() => dashboard.setActiveTab(DBOT_TABS.ANALYSIS_TOOL)}
+                    aria-label='Open Analysis Tool'
+                    style={{
+                        position: 'absolute',
+                        top: '12px',
+                        right: '16px',
+                        zIndex: 20,
+                        padding: '9px 14px',
+                        border: '1px solid #c8a45d',
+                        borderRadius: '8px',
+                        background: '#171717',
+                        color: '#e6c77a',
+                        fontWeight: 600,
+                        cursor: 'pointer',
+                    }}
+                >
+                    Open Analysis
+                </button>
                 <div id='scratch_div' ref={el_ref}>
                     <WorkspaceWrapper />
                 </div>
