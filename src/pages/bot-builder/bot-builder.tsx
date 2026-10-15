@@ -134,7 +134,7 @@ const BotBuilder = observer(() => {
             </div>
             {is_builder_tab_active && <BotBuilderTourHandler is_mobile={!isDesktop} />}
             {is_builder_tab_active && <LoadModal />}
-            {is_builder_tab_active && <SaveModal />
+            {is_builder_tab_active && <SaveModal />}
             {is_builder_tab_active && is_open && <QuickStrategy1 />}
         </>
     );
