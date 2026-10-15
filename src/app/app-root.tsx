@@ -17,19 +17,25 @@ const AppRootLoader = () => {
 
 const ErrorComponentWrapper = observer(() => {
     const { common } = useStore();
+    const currentError = common.error;
+    const errorHeader = currentError?.header;
+    const errorMessage = currentError?.message;
 
-    if (!common.error) return null;
+    // Do not open the generic "Sorry for the interruption" modal for an
+    // empty/stale error object. The modal is only useful when an actual
+    // error message or header exists.
+    if (!currentError || (!errorHeader && !errorMessage)) return null;
 
     return (
         <ErrorComponent
-            header={common.error?.header}
-            message={common.error?.message}
-            redirect_label={common.error?.redirect_label}
-            redirectOnClick={common.error?.redirectOnClick}
-            should_clear_error_on_click={common.error?.should_clear_error_on_click}
+            header={errorHeader}
+            message={errorMessage}
+            redirect_label={currentError.redirect_label}
+            redirectOnClick={currentError.redirectOnClick}
+            should_clear_error_on_click={currentError.should_clear_error_on_click}
             setError={common.setError}
-            redirect_to={common.error?.redirect_to}
-            should_redirect={common.error?.should_redirect}
+            redirect_to={currentError.redirect_to}
+            should_redirect={currentError.should_redirect}
         />
     );
 });
