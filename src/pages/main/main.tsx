@@ -188,7 +188,11 @@ const AppWrapper = observer(() => {
         return hash_tab_index >= 0 && isMainTabVisible(hash_tab_index) ? hash_tab_index : getDefaultLandingTab();
     };
     const active_hash_tab = GetHashedValue(active_tab);
-    const should_show_run_panel = active_tab !== UP_AND_DOWN;
+    // Trading controls should not cover the Free Bots catalogue or stack over the Analysis page.
+    const should_show_run_panel =
+        active_tab !== UP_AND_DOWN &&
+        active_tab !== DBOT_TABS.BEST_BOTS &&
+        active_tab !== DBOT_TABS.ANALYSIS_TOOL;
 
     // Set up modal state change listener
     React.useEffect(() => {
