@@ -466,15 +466,60 @@
 }
 
 .digit-panel-page {
+    position: relative;
     background: #eef2f6;
     box-sizing: border-box;
     display: flex;
+    flex-direction: column;
+    align-items: center;
     height: var(--tab-content-height);
-    justify-content: center;
+    justify-content: flex-start;
     overflow-x: hidden;
     overflow-y: auto;
-    padding: 2.4rem 1.6rem 4rem;
+    padding: 0.8rem 1.6rem 2rem;
     width: 100%;
+
+    .analysis-run-control {
+        display: flex;
+        align-items: center;
+        justify-content: flex-end;
+        flex: 0 0 auto;
+        width: 100%;
+        max-width: 56rem;
+        min-height: 0;
+        margin: 0 auto 0.6rem;
+
+        .toolbar__section,
+        .animation__wrapper {
+            width: auto;
+            max-width: 100%;
+            min-height: 0;
+            margin: 0;
+            padding: 0;
+        }
+
+        .animation__container {
+            display: none;
+        }
+
+        .animation__run-button,
+        .animation__stop-button,
+        .animation__pause-button,
+        .animation__resume-button {
+            min-width: 0;
+            width: auto;
+            height: 3rem !important;
+            min-height: 3rem;
+            padding: 0 1.1rem !important;
+            border-radius: 0.8rem !important;
+            font-size: 1.25rem;
+        }
+
+        .animation__controls {
+            min-height: 3rem;
+            gap: 0.5rem;
+        }
+    }
 
     .digit-panel {
         align-self: flex-start;
@@ -494,6 +539,6 @@
 
     .digit-panel-page {
         height: var(--tab-content-height-mobile);
-        padding: 0.8rem 0.6rem 2rem;
+        padding: 0.5rem 0.6rem 1.2rem;
     }
 }
